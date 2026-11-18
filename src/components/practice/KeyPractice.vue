@@ -36,6 +36,17 @@ function selectArticle(id: string) {
   router.push(`/practice/${props.source.kind}/${id}`)
 }
 
+const nextArticle = computed(() => {
+  const list = props.source.catalog
+  if (!list?.length || !props.source.articleId) return null
+  const i = list.findIndex((a) => a.id === props.source.articleId)
+  return i >= 0 && i < list.length - 1 ? list[i + 1] : null
+})
+
+function goNext() {
+  if (nextArticle.value) selectArticle(nextArticle.value.id)
+}
+
 const handsOverride = ref<boolean | null>(null)
 const showHands = computed(() => {
   if (!settings.showKeyboard) return false
@@ -90,7 +101,11 @@ function goBack() {
 const { pressed } = useKeyboardInput({
   onChar: (ch, e) => handleChar(ch, e.code),
   onBackspace: () => session.backspace(),
-  onEnter: () => result.value && again(),
+  onEnter: () => {
+    if (!result.value) return
+    if (nextArticle.value) goNext()
+    else again()
+  },
   onEscape: goBack,
 })
 </script>
@@ -158,8 +173,10 @@ const { pressed } = useKeyboardInput({
       :speed-unit="result.speedUnit"
       :accuracy="result.accuracy"
       :duration-ms="result.durationMs"
+      :next-label="nextArticle?.title"
       @again="again"
       @back="goBack"
+      @next="goNext"
     />
 
     <ArticleCatalog

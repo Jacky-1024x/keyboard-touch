@@ -10,9 +10,11 @@ const props = defineProps<{
   durationMs: number
   /** 游戏得分，传入时展示 */
   score?: number
+  /** 下一篇标题，传入时显示「继续」 */
+  nextLabel?: string
 }>()
 
-defineEmits<{ (e: 'again'): void; (e: 'back'): void }>()
+defineEmits<{ (e: 'again'): void; (e: 'back'): void; (e: 'next'): void }>()
 
 const stars = computed(() => starsOf(props.accuracy, props.speed, props.speedUnit))
 const praise = computed(() => ['继续加油！', '很棒！', '太厉害了！'][stars.value - 1])
@@ -34,7 +36,13 @@ const seconds = computed(() => Math.round(props.durationMs / 1000))
       </div>
       <div class="actions">
         <button class="btn" @click="$emit('back')">返回</button>
-        <button class="btn primary" @click="$emit('again')">再来一次（Enter）</button>
+        <button class="btn" :class="{ primary: !nextLabel }" @click="$emit('again')">
+          {{ nextLabel ? '再来一次' : '再来一次（Enter）' }}
+        </button>
+        <button v-if="nextLabel" class="btn primary next" @click="$emit('next')">
+          继续下一篇（Enter）
+          <small>{{ nextLabel }}</small>
+        </button>
       </div>
     </div>
   </div>
@@ -101,8 +109,29 @@ h2 {
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
+}
+
+.btn.next {
+  height: auto;
+  min-height: 44px;
+  padding: 8px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.btn.next small {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.9;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @keyframes fade {

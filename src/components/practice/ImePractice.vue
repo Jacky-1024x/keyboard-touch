@@ -33,6 +33,17 @@ function selectArticle(id: string) {
   router.push(`/practice/${props.source.kind}/${id}`)
 }
 
+const nextArticle = computed(() => {
+  const list = props.source.catalog
+  if (!list?.length || !props.source.articleId) return null
+  const i = list.findIndex((a) => a.id === props.source.articleId)
+  return i >= 0 && i < list.length - 1 ? list[i + 1] : null
+})
+
+function goNext() {
+  if (nextArticle.value) selectArticle(nextArticle.value.id)
+}
+
 const strip = (s: string) => s.replace(/\s+/g, '')
 
 /** 原文逐字符，带“第几个有效字符”的下标（空白为 -1） */
@@ -108,7 +119,8 @@ function onCompositionEnd() {
 function onKeyDown(e: KeyboardEvent) {
   if (finished.value && e.key === 'Enter') {
     e.preventDefault()
-    again()
+    if (nextArticle.value) goNext()
+    else again()
   }
 }
 
@@ -161,8 +173,10 @@ onBeforeUnmount(() => window.clearInterval(timer))
       speed-unit="字/分"
       :accuracy="accuracy"
       :duration-ms="elapsedMs"
+      :next-label="nextArticle?.title"
       @again="again"
       @back="router.push(back)"
+      @next="goNext"
     />
 
     <ArticleCatalog
