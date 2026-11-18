@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
+import ArticleCatalog from '@/components/ArticleCatalog.vue'
 import StatsBar from '@/components/StatsBar.vue'
 import TypingText from '@/components/TypingText.vue'
 import KeyboardDock from '@/components/KeyboardDock.vue'
@@ -26,7 +27,14 @@ session.load(props.source.segments)
 const result = ref<SessionResult | null>(null)
 const wrongCode = ref('')
 const showTranslation = ref(false)
+const catalogOpen = ref(false)
 let wrongTimer: number | undefined
+
+function selectArticle(id: string) {
+  catalogOpen.value = false
+  if (id === props.source.articleId) return
+  router.push(`/practice/${props.source.kind}/${id}`)
+}
 
 const handsOverride = ref<boolean | null>(null)
 const showHands = computed(() => {
@@ -90,6 +98,7 @@ const { pressed } = useKeyboardInput({
 <template>
   <div class="page kb-scope" :class="{ 'no-hands': !showHands }">
     <AppHeader :title="source.title" :subtitle="source.subtitle" :back="back">
+      <button v-if="source.catalog?.length" class="btn sm primary" @click="catalogOpen = true">📚 目录</button>
       <button
         v-if="settings.showKeyboard"
         class="btn sm"
@@ -151,6 +160,16 @@ const { pressed } = useKeyboardInput({
       :duration-ms="result.durationMs"
       @again="again"
       @back="goBack"
+    />
+
+    <ArticleCatalog
+      v-if="source.catalog"
+      :open="catalogOpen"
+      :title="source.catalogTitle ?? '目录'"
+      :items="source.catalog"
+      :current-id="source.articleId ?? ''"
+      @close="catalogOpen = false"
+      @select="selectArticle"
     />
   </div>
 </template>

@@ -1,7 +1,14 @@
 import type { Segment } from './typing-session'
 import { findLesson, generateLessonSegments } from '@/data/lessons'
 import { findWordBook } from '@/data/words-en'
-import { findArticle } from '@/data/articles'
+import {
+  EN_ARTICLES,
+  articlesOfCategory,
+  catalogItems,
+  findArticle,
+  findCategory,
+  type Article,
+} from '@/data/articles'
 
 export type PracticeKind = 'basic' | 'words' | 'en-article' | 'zh-pinyin' | 'zh-hanzi'
 
@@ -11,6 +18,12 @@ export const KIND_NAMES: Record<PracticeKind, string> = {
   'en-article': '英文文章',
   'zh-pinyin': '中文拼音',
   'zh-hanzi': '中文输入',
+}
+
+export interface CatalogEntry {
+  id: string
+  title: string
+  source?: string
 }
 
 export interface PracticeSource {
@@ -23,8 +36,29 @@ export interface PracticeSource {
   translation?: string
   /** 入门类练习：强制打对才前进；手指提示 auto 模式下显示 */
   beginner: boolean
+  /** 文章练习：同分类目录，用于页内切换 */
+  catalog?: CatalogEntry[]
+  catalogTitle?: string
+  articleId?: string
   /** 重新生成内容（随机类练习） */
   regenerate?: () => Segment[]
+}
+
+function articleCatalog(lang: 'en' | 'zh', article: Article) {
+  // 中文：同分类内切换；英文：全部文章可切换
+  if (lang === 'en') {
+    return {
+      catalog: catalogItems(EN_ARTICLES),
+      catalogTitle: '📖 英文文章',
+      articleId: article.id,
+    }
+  }
+  const cat = findCategory(lang, article.category)
+  return {
+    catalog: catalogItems(articlesOfCategory(lang, article.category)),
+    catalogTitle: cat ? `${cat.icon} ${cat.title}` : '目录',
+    articleId: article.id,
+  }
 }
 
 const CUSTOM_KEY = 'kt:custom'
@@ -115,6 +149,7 @@ export async function resolvePractice(kind: PracticeKind, id: string): Promise<P
         rawText: text,
         translation: article?.translation,
         beginner: false,
+        ...(article ? articleCatalog('en', article) : {}),
       }
     }
     case 'zh-pinyin':
@@ -132,6 +167,7 @@ export async function resolvePractice(kind: PracticeKind, id: string): Promise<P
         segments: kind === 'zh-pinyin' ? textToPinyinSegments(text) : [],
         rawText: text,
         beginner: false,
+        ...(article ? articleCatalog('zh', article) : {}),
       }
     }
   }

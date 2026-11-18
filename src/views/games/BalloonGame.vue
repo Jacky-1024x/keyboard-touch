@@ -61,8 +61,15 @@ let raf = 0
 let lastTs = 0
 let spawnCd = 0
 
-const speedPerSec = computed(() => 0.07 + (game.level - 1) * 0.012)
-const spawnInterval = computed(() => Math.max(900, 2400 - (game.level - 1) * 180))
+/**
+ * 关卡难度曲线（越往后越难）：
+ * - 上升速度：第 1 关慢，之后每关明显加快
+ * - 生成间隔：越来越密
+ * - 同屏数量：第 1 关最多 3 个，之后逐步加到 12 个
+ */
+const speedPerSec = computed(() => 0.055 + (game.level - 1) * 0.022)
+const spawnInterval = computed(() => Math.max(420, 2300 - (game.level - 1) * 240))
+const maxBalloons = computed(() => Math.min(12, 2 + game.level))
 const isPinyin = computed(() => props.mode === 'pinyin')
 
 function makeItem(): Pick<Balloon, 'label' | 'sub' | 'target'> {
@@ -91,7 +98,7 @@ function makeItem(): Pick<Balloon, 'label' | 'sub' | 'target'> {
 
 function spawn() {
   const alive = balloons.value.filter((b) => !b.popped)
-  if (alive.length >= 4 + game.level) return
+  if (alive.length >= maxBalloons.value) return
   // 避免同一首字母的气球同时出现，减少歧义
   let item = makeItem()
   for (let i = 0; i < 5 && alive.some((b) => b.target[0] === item.target[0]); i++) item = makeItem()
@@ -103,6 +110,12 @@ function spawn() {
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     popped: false,
   })
+}
+
+/** 升关时立刻补气球，让同屏数量跟上新上限 */
+function fillToCap() {
+  let guard = 20
+  while (balloons.value.filter((b) => !b.popped).length < maxBalloons.value && guard-- > 0) spawn()
 }
 
 function tick(ts: number) {
@@ -183,7 +196,10 @@ function pop(b: Balloon) {
   game.typedChars += b.target.length
   if (isPinyin.value) game.hanzi += b.label.length
   game.score += Math.round(b.target.length * 10 * (1 + Math.min(game.combo, 10) * 0.1))
-  if (game.popped % 8 === 0) game.level++
+  if (game.popped % 8 === 0) {
+    game.level++
+    fillToCap()
+  }
   sound.pop()
   resetLock()
   removeLater(b.id)
@@ -259,7 +275,7 @@ onBeforeUnmount(() => cancelAnimationFrame(raf))
     <AppHeader :title="`🎈 ${MODE_TITLES[mode]}`" back="/games">
       <div class="hud">
         <span>⭐ {{ game.score }}</span>
-        <span>🏅 第 {{ game.level }} 关</span>
+        <span>🏅 第 {{ game.level }} 关 · 最多{{ maxBalloons }}球</span>
         <span v-if="game.combo > 1" class="combo">🔥 连击 ×{{ game.combo }}</span>
         <span class="lives">
           <i v-for="i in MAX_LIVES" :key="i" :class="{ lost: i > game.lives }">❤️</i>

@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
+import ArticleCatalog from '@/components/ArticleCatalog.vue'
 import StatsBar from '@/components/StatsBar.vue'
 import ResultDialog from '@/components/ResultDialog.vue'
 import type { PracticeSource } from '@/core/practice-sources'
@@ -20,10 +21,17 @@ const value = ref('')
 /** 输入法合成结束后的已上屏文本 */
 const committed = ref('')
 const composing = ref(false)
+const catalogOpen = ref(false)
 const startAt = ref(0)
 const endAt = ref(0)
 const now = ref(Date.now())
 let timer: number | undefined
+
+function selectArticle(id: string) {
+  catalogOpen.value = false
+  if (id === props.source.articleId) return
+  router.push(`/practice/${props.source.kind}/${id}`)
+}
 
 const strip = (s: string) => s.replace(/\s+/g, '')
 
@@ -111,6 +119,7 @@ onBeforeUnmount(() => window.clearInterval(timer))
 <template>
   <div class="page">
     <AppHeader :title="source.title" :subtitle="source.subtitle ?? '中文输入'" :back="back">
+      <button v-if="source.catalog?.length" class="btn sm primary" @click="catalogOpen = true">📚 目录</button>
       <button class="btn sm" @click="again">🔄 重来</button>
     </AppHeader>
 
@@ -154,6 +163,16 @@ onBeforeUnmount(() => window.clearInterval(timer))
       :duration-ms="elapsedMs"
       @again="again"
       @back="router.push(back)"
+    />
+
+    <ArticleCatalog
+      v-if="source.catalog"
+      :open="catalogOpen"
+      :title="source.catalogTitle ?? '目录'"
+      :items="source.catalog"
+      :current-id="source.articleId ?? ''"
+      @close="catalogOpen = false"
+      @select="selectArticle"
     />
   </div>
 </template>
