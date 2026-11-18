@@ -8,10 +8,10 @@ const balloonModes = [
   { mode: 'pinyin', title: '拼音气球', desc: '看汉字打拼音', icon: '🀄' },
 ]
 
-const upcoming = [
-  { title: '打地鼠', icon: '🐹', desc: '地鼠举着字母冒出来' },
-  { title: '打字赛车', icon: '🏎️', desc: '打得越快车越快' },
-  { title: '太空保卫战', icon: '🚀', desc: '打出单词击落陨石' },
+const moreGames = [
+  { to: '/games/mole', title: '打地鼠', icon: '🐹', desc: '地鼠举着字母冒出来' },
+  { to: '/games/race', title: '打字赛车', icon: '🏎️', desc: '打得越快车越快' },
+  { to: '/games/space', title: '太空保卫战', icon: '🚀', desc: '打出单词击落陨石' },
 ]
 </script>
 
@@ -28,13 +28,31 @@ const upcoming = [
         </RouterLink>
       </div>
 
-      <h3 class="section-title">即将上线</h3>
+      <h3 class="section-title">👮 警察抓小偷</h3>
       <div class="grid-cards">
-        <div v-for="g in upcoming" :key="g.title" class="game card disabled">
+        <RouterLink to="/games/chase" class="game card">
+          <span class="icon">👮</span>
+          <b>警察抓小偷</b>
+          <span class="desc">在卡通街上追上小偷，把东西要回来</span>
+        </RouterLink>
+      </div>
+
+      <h3 class="section-title">🟡 迷宫吃豆</h3>
+      <div class="grid-cards">
+        <RouterLink to="/games/maze" class="game card">
+          <span class="icon">🟡</span>
+          <b>迷宫吃豆</b>
+          <span class="desc">吃豆人追着豆子，跑过事先生成的 100 关迷宫</span>
+        </RouterLink>
+      </div>
+
+      <h3 class="section-title">更多游戏</h3>
+      <div class="grid-cards">
+        <RouterLink v-for="g in moreGames" :key="g.to" :to="g.to" class="game card">
           <span class="icon">{{ g.icon }}</span>
           <b>{{ g.title }}</b>
           <span class="desc">{{ g.desc }}</span>
-        </div>
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -48,10 +66,6 @@ const upcoming = [
   padding: 20px;
   color: inherit;
   text-decoration: none;
-}
-
-.game.disabled {
-  opacity: 0.5;
 }
 
 .icon {

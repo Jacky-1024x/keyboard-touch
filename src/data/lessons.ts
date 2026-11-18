@@ -8,9 +8,7 @@ export interface Lesson {
   newKeys: string
   /** 本课练习用到的全部字符（含复习） */
   pool: string
-  /** 生成多少组 */
-  groups?: number
-  /** 固定练习内容（优先于随机生成） */
+  /** 固定练习内容（优先于随机生成，会循环直到凑满本课长度） */
   fixed?: string[]
 }
 
@@ -26,7 +24,7 @@ export const LESSON_STAGES: { title: string; lessons: Lesson[] }[] = [
       { id: 'dk', title: 'D 和 K', desc: '中指出场', newKeys: 'dk', pool: 'fjdk' },
       { id: 'sl', title: 'S 和 L', desc: '无名指出场', newKeys: 'sl', pool: 'fjdksl' },
       { id: 'a;', title: 'A 和 ;', desc: '小指出场', newKeys: 'a;', pool: HOME },
-      { id: 'home', title: '基准键综合', desc: 'ASDF JKL;', newKeys: '', pool: HOME, groups: 16 },
+      { id: 'home', title: '基准键综合', desc: 'ASDF JKL;', newKeys: '', pool: HOME },
       { id: 'gh', title: 'G 和 H', desc: '食指向中间伸', newKeys: 'gh', pool: HOME + 'gh' },
     ],
   },
@@ -38,7 +36,7 @@ export const LESSON_STAGES: { title: string; lessons: Lesson[] }[] = [
       { id: 'ty', title: 'T 和 Y', desc: '食指斜上方', newKeys: 'ty', pool: HOME + 'gheiruty' },
       { id: 'wo', title: 'W 和 O', desc: '无名指向上', newKeys: 'wo', pool: HOME + 'gh' + 'eiru' + 'tywo' },
       { id: 'qp', title: 'Q 和 P', desc: '小指向上', newKeys: 'qp', pool: HOME + 'gh' + TOP },
-      { id: 'top', title: '上排综合', desc: 'QWERTYUIOP', newKeys: '', pool: TOP + 'gh' + HOME, groups: 16 },
+      { id: 'top', title: '上排综合', desc: 'QWERTYUIOP', newKeys: '', pool: TOP + 'gh' + HOME },
     ],
   },
   {
@@ -49,13 +47,13 @@ export const LESSON_STAGES: { title: string; lessons: Lesson[] }[] = [
       { id: 'x.', title: 'X 和 .', desc: '无名指向下', newKeys: 'x.', pool: HOME + 'vmc,x.' },
       { id: 'z/', title: 'Z 和 /', desc: '小指向下', newKeys: 'z/', pool: HOME + 'vmc,x.z/' },
       { id: 'bn', title: 'B 和 N', desc: '食指斜下方', newKeys: 'bn', pool: HOME + BOTTOM },
-      { id: 'bottom', title: '下排综合', desc: 'ZXCVBNM', newKeys: '', pool: BOTTOM + HOME, groups: 16 },
+      { id: 'bottom', title: '下排综合', desc: 'ZXCVBNM', newKeys: '', pool: BOTTOM + HOME },
     ],
   },
   {
     title: '第四关 · 进阶',
     lessons: [
-      { id: 'all', title: '全部字母', desc: '26 个字母大混战', newKeys: '', pool: 'abcdefghijklmnopqrstuvwxyz', groups: 20 },
+      { id: 'all', title: '全部字母', desc: '26 个字母大混战', newKeys: '', pool: 'abcdefghijklmnopqrstuvwxyz' },
       { id: 'num', title: '数字键', desc: '1234567890', newKeys: '1234567890', pool: '1234567890' },
       {
         id: 'shift',
@@ -87,19 +85,35 @@ function pick(str: string) {
   return str[Math.floor(Math.random() * str.length)]
 }
 
-/** 生成一节课的练习内容：若干组 2~5 个字符，新键出现概率更高 */
+/** 每课统一长度：只计要打的字符，不含组与组之间的空格 */
+const LESSON_CHARS = 300
+
+/** 生成一节课的练习内容：统一 300 个字符。随机课按 2~5 个一组，新键出现概率更高 */
 export function generateLessonSegments(lesson: Lesson): Segment[] {
-  if (lesson.fixed) return lesson.fixed.map((text) => ({ text }))
-  const groups = lesson.groups ?? 12
   const list: Segment[] = []
-  for (let g = 0; g < groups; g++) {
-    const len = 2 + Math.floor(Math.random() * 4)
+  let count = 0
+
+  if (lesson.fixed?.length) {
+    let i = 0
+    while (count < LESSON_CHARS) {
+      const text = lesson.fixed[i % lesson.fixed.length]
+      const chunk = text.slice(0, LESSON_CHARS - count)
+      list.push({ text: chunk })
+      count += chunk.length
+      i++
+    }
+    return list
+  }
+
+  while (count < LESSON_CHARS) {
+    const len = Math.min(LESSON_CHARS - count, 2 + Math.floor(Math.random() * 4))
     let s = ''
     for (let i = 0; i < len; i++) {
       const useNew = lesson.newKeys && Math.random() < 0.6
       s += pick(useNew ? lesson.newKeys : lesson.pool)
     }
     list.push({ text: s })
+    count += s.length
   }
   return list
 }

@@ -57,6 +57,7 @@ src/
     ├── CustomView.vue          自定义练习
     ├── GamesView.vue           游戏列表
     ├── games/BalloonGame.vue   气球大作战
+    ├── games/ChaseGame.vue     警察抓小偷
     ├── PracticeView.vue        练习页：加载内容，分发到 KeyPractice / ImePractice
     └── SettingsView.vue        设置与记录
 ```
@@ -69,7 +70,7 @@ src/
 | `/basic` `/words` `/articles/en` `/articles/zh` | 各模块列表 |
 | `/practice/:kind/:id` | 统一练习页。`kind` ∈ `basic` `words` `en-article` `zh-pinyin` `zh-hanzi`；`id` 为课程/词库/文章 id，`custom` 表示自定义内容 |
 | `/custom` | 自定义练习编辑 |
-| `/games` `/games/balloon/:mode` | 游戏列表 / 气球游戏（`letter` `word` `zh-en` `pinyin`） |
+| `/games` `/games/balloon/:mode` `/games/chase` | 游戏列表 / 气球游戏（`letter` `word` `zh-en` `pinyin`）/ 警察抓小偷 |
 | `/settings` | 设置与记录 |
 
 ## 4. 核心模型
@@ -122,10 +123,10 @@ session.result()
 
 ### 添加基础课程
 
-编辑 `src/data/lessons.ts`，在对应关卡加入：
+编辑 `src/data/lessons.ts`，在对应关卡加入（每课固定生成 300 个字符）：
 
 ```ts
-{ id: 'my-lesson', title: '标题', desc: '说明', newKeys: '新键', pool: '全部可用键', groups: 12 }
+{ id: 'my-lesson', title: '标题', desc: '说明', newKeys: '新键', pool: '全部可用键' }
 // 或固定内容
 { id: 'x', title: '...', desc: '...', newKeys: '', pool: '', fixed: ['abc', 'def'] }
 ```

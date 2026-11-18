@@ -21,5 +21,20 @@
     "typescript": "~5.9",
     "vite": "^6.4.6",
     "vue-tsc": "^3.3.14"
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jacky-1024x/keyboard-touch.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jacky-1024x/keyboard-touch/issues"
+  },
+  "homepage": "https://github.com/Jacky-1024x/keyboard-touch#readme"
 }

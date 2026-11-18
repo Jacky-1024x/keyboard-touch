@@ -62,14 +62,14 @@ let lastTs = 0
 let spawnCd = 0
 
 /**
- * 关卡难度曲线（越往后越难）：
- * - 上升速度：第 1 关慢，之后每关明显加快
- * - 生成间隔：越来越密
- * - 同屏数量：第 1 关最多 3 个，之后逐步加到 12 个
+ * 关卡难度曲线（缓坡，越往后略难）：
+ * - 上升速度：第 1 关保持较慢，之后每关只加一点，并设上限
+ * - 同屏数量：第 1 关 3 个，每两关才多 1 个，最多 8 个
+ * - 生成间隔：慢慢变密，避免一关之内就把屏幕挤满
  */
-const speedPerSec = computed(() => 0.055 + (game.level - 1) * 0.022)
-const spawnInterval = computed(() => Math.max(420, 2300 - (game.level - 1) * 240))
-const maxBalloons = computed(() => Math.min(12, 2 + game.level))
+const speedPerSec = computed(() => Math.min(0.16, 0.055 + (game.level - 1) * 0.008))
+const spawnInterval = computed(() => Math.max(1200, 2500 - (game.level - 1) * 80))
+const maxBalloons = computed(() => Math.min(8, 3 + Math.floor((game.level - 1) / 2)))
 const isPinyin = computed(() => props.mode === 'pinyin')
 
 function makeItem(): Pick<Balloon, 'label' | 'sub' | 'target'> {
@@ -110,12 +110,6 @@ function spawn() {
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
     popped: false,
   })
-}
-
-/** 升关时立刻补气球，让同屏数量跟上新上限 */
-function fillToCap() {
-  let guard = 20
-  while (balloons.value.filter((b) => !b.popped).length < maxBalloons.value && guard-- > 0) spawn()
 }
 
 function tick(ts: number) {
@@ -196,10 +190,7 @@ function pop(b: Balloon) {
   game.typedChars += b.target.length
   if (isPinyin.value) game.hanzi += b.label.length
   game.score += Math.round(b.target.length * 10 * (1 + Math.min(game.combo, 10) * 0.1))
-  if (game.popped % 8 === 0) {
-    game.level++
-    fillToCap()
-  }
+  if (game.popped % 8 === 0) game.level++
   sound.pop()
   resetLock()
   removeLater(b.id)

@@ -1,3 +1,5 @@
+import { CLASSIC_MORE, SCHOOL_MORE, SONG_MORE, TANG_MORE } from './articles-zh-more'
+
 export type ZhCategoryId = 'tang' | 'song' | 'classic' | 'school'
 export type EnCategoryId = 'fable' | 'rhyme' | 'story'
 
@@ -23,10 +25,10 @@ export interface ArticleCategory<T extends string = string> {
 }
 
 export const ZH_CATEGORIES: ArticleCategory<ZhCategoryId>[] = [
-  { id: 'tang', title: '唐诗', icon: '📜', desc: '小学生必背古诗' },
-  { id: 'song', title: '宋诗宋词', icon: '🎐', desc: '宋元明清名篇' },
-  { id: 'classic', title: '古文', icon: '📖', desc: '三字经 · 百家姓 · 千字文 · 弟子规' },
-  { id: 'school', title: '小学课文', icon: '🏫', desc: '普通课文与小古文' },
+  { id: 'tang', title: '唐诗', icon: '📜', desc: '课本唐诗与常背名篇' },
+  { id: 'song', title: '宋诗宋词', icon: '🎐', desc: '课本宋诗宋词与元明清名篇' },
+  { id: 'classic', title: '古文', icon: '📖', desc: '蒙学 · 课内文言文 · 小古文' },
+  { id: 'school', title: '小学课文', icon: '🏫', desc: '课文、乐府与故事' },
 ]
 
 export const EN_CATEGORIES: ArticleCategory<EnCategoryId>[] = [
@@ -40,8 +42,8 @@ export const ZH_ARTICLES: Article[] = [
   { id: 'yong-e', title: '咏鹅', level: 1, source: '唐·骆宾王', category: 'tang', content: '鹅，鹅，鹅，\n曲项向天歌。\n白毛浮绿水，\n红掌拨清波。' },
   { id: 'jing-ye-si', title: '静夜思', level: 1, source: '唐·李白', category: 'tang', content: '床前明月光，\n疑是地上霜。\n举头望明月，\n低头思故乡。' },
   { id: 'chun-xiao', title: '春晓', level: 1, source: '唐·孟浩然', category: 'tang', content: '春眠不觉晓，\n处处闻啼鸟。\n夜来风雨声，\n花落知多少。' },
-  { id: 'min-nong-1', title: '悯农（其一）', level: 1, source: '唐·李绅', category: 'tang', content: '锄禾日当午，\n汗滴禾下土。\n谁知盘中餐，\n粒粒皆辛苦。' },
-  { id: 'min-nong-2', title: '悯农（其二）', level: 1, source: '唐·李绅', category: 'tang', content: '春种一粒粟，\n秋收万颗子。\n四海无闲田，\n农夫犹饿死。' },
+  { id: 'min-nong-1', title: '悯农（其一）', level: 1, source: '唐·李绅', category: 'tang', content: '春种一粒粟，\n秋收万颗子。\n四海无闲田，\n农夫犹饿死。' },
+  { id: 'min-nong-2', title: '悯农（其二）', level: 1, source: '唐·李绅', category: 'tang', content: '锄禾日当午，\n汗滴禾下土。\n谁知盘中餐，\n粒粒皆辛苦。' },
   { id: 'deng-guan-que-lou', title: '登鹳雀楼', level: 1, source: '唐·王之涣', category: 'tang', content: '白日依山尽，\n黄河入海流。\n欲穷千里目，\n更上一层楼。' },
   { id: 'ye-si', title: '夜思', level: 1, source: '唐·李白', category: 'tang', content: '床前看月光，\n疑是地上霜。\n举头望山月，\n低头思故乡。' },
   { id: 'xiang-si', title: '相思', level: 2, source: '唐·王维', category: 'tang', content: '红豆生南国，\n春来发几枝。\n愿君多采撷，\n此物最相思。' },
@@ -52,26 +54,29 @@ export const ZH_ARTICLES: Article[] = [
   { id: 'huang-he-lou-song-meng-hao-ran', title: '黄鹤楼送孟浩然之广陵', level: 2, source: '唐·李白', category: 'tang', content: '故人西辞黄鹤楼，\n烟花三月下扬州。\n孤帆远影碧空尽，\n唯见长江天际流。' },
   { id: 'wang-tian-men-shan', title: '望天门山', level: 2, source: '唐·李白', category: 'tang', content: '天门中断楚江开，\n碧水东流至此回。\n两岸青山相对出，\n孤帆一片日边来。' },
   { id: 'zao-fa-bai-di-cheng', title: '早发白帝城', level: 2, source: '唐·李白', category: 'tang', content: '朝辞白帝彩云间，\n千里江陵一日还。\n两岸猿声啼不住，\n轻舟已过万重山。' },
-  { id: 'jue-ju-du-fu', title: '绝句', level: 1, source: '唐·杜甫', category: 'tang', content: '两个黄鹂鸣翠柳，\n一行白鹭上青天。\n窗含西岭千秋雪，\n门泊东吴万里船。' },
-  { id: 'chun-ye-xi-yu', title: '春夜喜雨', level: 2, source: '唐·杜甫', category: 'tang', content: '好雨知时节，\n当春乃发生。\n随风潜入夜，\n润物细无声。' },
+  { id: 'jue-ju-du-fu', title: '绝句（两个黄鹂）', level: 1, source: '唐·杜甫', category: 'tang', content: '两个黄鹂鸣翠柳，\n一行白鹭上青天。\n窗含西岭千秋雪，\n门泊东吴万里船。' },
+  { id: 'chun-ye-xi-yu', title: '春夜喜雨', level: 2, source: '唐·杜甫', category: 'tang', content: '好雨知时节，\n当春乃发生。\n随风潜入夜，\n润物细无声。\n野径云俱黑，\n江船火独明。\n晓看红湿处，\n花重锦官城。' },
   { id: 'jiang-xue', title: '江雪', level: 2, source: '唐·柳宗元', category: 'tang', content: '千山鸟飞绝，\n万径人踪灭。\n孤舟蓑笠翁，\n独钓寒江雪。' },
   { id: 'feng-qiao-ye-bo', title: '枫桥夜泊', level: 2, source: '唐·张继', category: 'tang', content: '月落乌啼霜满天，\n江枫渔火对愁眠。\n姑苏城外寒山寺，\n夜半钟声到客船。' },
   { id: 'you-zi-yin', title: '游子吟', level: 1, source: '唐·孟郊', category: 'tang', content: '慈母手中线，\n游子身上衣。\n临行密密缝，\n意恐迟迟归。\n谁言寸草心，\n报得三春晖。' },
   { id: 'xiao-er', title: '小儿垂钓', level: 1, source: '唐·胡令能', category: 'tang', content: '蓬头稚子学垂纶，\n侧坐莓苔草映身。\n路人借问遥招手，\n怕得鱼惊不应人。' },
   { id: 'hui-xiang-ou-shu', title: '回乡偶书', level: 2, source: '唐·贺知章', category: 'tang', content: '少小离家老大回，\n乡音无改鬓毛衰。\n儿童相见不相识，\n笑问客从何处来。' },
   { id: 'yong-liu', title: '咏柳', level: 1, source: '唐·贺知章', category: 'tang', content: '碧玉妆成一树高，\n万条垂下绿丝绦。\n不知细叶谁裁出，\n二月春风似剪刀。' },
-  { id: 'liang-zhou-ci', title: '凉州词', level: 2, source: '唐·王之涣', category: 'tang', content: '黄河远上白云间，\n一片孤城万仞山。\n羌笛何须怨杨柳，\n春风不度玉门关。' },
+  { id: 'liang-zhou-ci', title: '凉州词（黄河远上）', level: 2, source: '唐·王之涣', category: 'tang', content: '黄河远上白云间，\n一片孤城万仞山。\n羌笛何须怨杨柳，\n春风不度玉门关。' },
   { id: 'chu-sai', title: '出塞', level: 2, source: '唐·王昌龄', category: 'tang', content: '秦时明月汉时关，\n万里长征人未还。\n但使龙城飞将在，\n不教胡马度阴山。' },
   { id: 'fu-rong-lou', title: '芙蓉楼送辛渐', level: 2, source: '唐·王昌龄', category: 'tang', content: '寒雨连江夜入吴，\n平明送客楚山孤。\n洛阳亲友如相问，\n一片冰心在玉壶。' },
   { id: 'qiuye', title: '山行', level: 1, source: '唐·杜牧', category: 'tang', content: '远上寒山石径斜，\n白云生处有人家。\n停车坐爱枫林晚，\n霜叶红于二月花。' },
   { id: 'qing-ming', title: '清明', level: 1, source: '唐·杜牧', category: 'tang', content: '清明时节雨纷纷，\n路上行人欲断魂。\n借问酒家何处有，\n牧童遥指杏花村。' },
   { id: 'le-you-yuan', title: '乐游原', level: 2, source: '唐·李商隐', category: 'tang', content: '向晚意不适，\n驱车登古原。\n夕阳无限好，\n只是近黄昏。' },
   { id: 'feng', title: '风', level: 1, source: '唐·李峤', category: 'tang', content: '解落三秋叶，\n能开二月花。\n过江千尺浪，\n入竹万竿斜。' },
+  { id: 'cao', title: '赋得古原草送别', level: 1, source: '唐·白居易', category: 'tang', content: '离离原上草，\n一岁一枯荣。\n野火烧不尽，\n春风吹又生。' },
 
-  // ——— 宋词 ———
+  ...TANG_MORE,
+
+  // ——— 宋诗宋词 ———
   {
     id: 'ru-meng-ling',
-    title: '如梦令',
+    title: '如梦令（常记溪亭）',
     level: 2,
     source: '宋·李清照',
     category: 'song',
@@ -91,7 +96,7 @@ export const ZH_ARTICLES: Article[] = [
     level: 3,
     source: '宋·苏轼',
     category: 'song',
-    content: '明月几时有？\n把酒问青天。\n不知天上宫阙，\n今夕是何年。\n我欲乘风归去，\n又恐琼楼玉宇，\n高处不胜寒。\n起舞弄清影，\n何似在人间。',
+    content: '明月几时有？把酒问青天。不知天上宫阙，今夕是何年。我欲乘风归去，又恐琼楼玉宇，高处不胜寒。起舞弄清影，何似在人间。\n转朱阁，低绮户，照无眠。不应有恨，何事长向别时圆？人有悲欢离合，月有阴晴圆缺，此事古难全。但愿人长久，千里共婵娟。',
   },
   {
     id: 'ti-xi-lin-bi',
@@ -207,12 +212,14 @@ export const ZH_ARTICLES: Article[] = [
   },
   {
     id: 'si-shi-tian-yuan',
-    title: '四时田园杂兴',
+    title: '四时田园杂兴（其三十一）',
     level: 1,
     source: '宋·范成大',
     category: 'song',
     content: '昼出耘田夜绩麻，\n村庄儿女各当家。\n童孙未解供耕织，\n也傍桑阴学种瓜。',
   },
+
+  ...SONG_MORE,
 
   // ——— 古文（分章，便于练习） ———
   {
@@ -312,6 +319,8 @@ export const ZH_ARTICLES: Article[] = [
     content: '朝起早，夜眠迟。\n老易至，惜此时。\n晨必盥，兼漱口。\n便溺回，辄净手。\n冠必正，纽必结。\n袜与履，俱紧切。\n置冠服，有定位。\n勿乱顿，致污秽。',
   },
 
+  ...CLASSIC_MORE,
+
   // ——— 小学课文 ———
   {
     id: 'xiao-mao-diao-yu',
@@ -347,22 +356,6 @@ export const ZH_ARTICLES: Article[] = [
     source: '小学课文',
     category: 'school',
     content: '远看山有色，\n近听水无声。\n春去花还在，\n人来鸟不惊。',
-  },
-  {
-    id: 'cao',
-    title: '草',
-    level: 1,
-    source: '唐·白居易',
-    category: 'school',
-    content: '离离原上草，\n一岁一枯荣。\n野火烧不尽，\n春风吹又生。',
-  },
-  {
-    id: 'chun-yu',
-    title: '春雨',
-    level: 1,
-    source: '小学课文',
-    category: 'school',
-    content: '好雨知时节，\n当春乃发生。\n随风潜入夜，\n润物细无声。',
   },
   {
     id: 'da-hai-de-ge',
@@ -454,6 +447,8 @@ export const ZH_ARTICLES: Article[] = [
     content:
       '孔子东游，见两小儿辩斗，问其故。一儿曰：“我以日始出时去人近，而日中时远也。”一儿曰：“我以日初出远，而日中时近也。”一儿曰：“日初出大如车盖，及日中则如盘盂，此不为远者小而近者大乎？”一儿曰：“日初出沧沧凉凉，及其日中如探汤，此不为近者热而远者凉乎？”孔子不能决也。两小儿笑曰：“孰为汝多知乎？”',
   },
+
+  ...SCHOOL_MORE,
 ]
 
 export const EN_ARTICLES: Article[] = [
